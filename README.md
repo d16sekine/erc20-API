@@ -13,8 +13,14 @@ How to run:
 API
 
 GET /tokens/getBalance
+
 GET /tokens/getTotalSuppy
+
 GET /tokens/getAllowance
+
 POST /tokens/transferToken
+
 POST /tokens/approveAccount
+
 POST /tokens/transferAllowance
+
