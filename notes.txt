@@ -1,0 +1,13 @@
+npm install express --save
+npm install --save-dev nodemon
+npm install body-parser --save
+install above libraries
+
+edit package.json and add to the scripts section
+"start": "nodemon server.js"
+
+npm run start
+
+npm install ethereumjs-util ethereumjs-tx web3@0.20
+--do not use web3 v1
+
