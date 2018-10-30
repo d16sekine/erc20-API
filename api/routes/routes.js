@@ -11,6 +11,8 @@ module.exports = function(app){
     app.route('/tokens/getAllowance').get(ercToken.get_allowance_balance);
 
     app.route('/tokens/transferToken').post(ercToken.post_transfer_token);
+    
+    app.route('/tokens/transferFromToken').post(ercToken.post_transfer_from_token);
 
     app.route('/tokens/approveAccount').post(ercToken.post_approve_account);
 
