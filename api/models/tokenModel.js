@@ -1,19 +1,22 @@
 'use strict';
+const fs = require("fs");
 var Web3 = require('web3');
-var util = require('ethereumjs-util');
 var tx = require('ethereumjs-tx');
-var abiArray = require('./erc20ABI');
-var web3 = new Web3( new Web3.providers.HttpProvider('https://rinkeby.infura.io/rLtE3NzUe88Hw8BnmBfF'));
-var contract =  web3.eth.contract(abiArray.human_standard_token_abi);
-var gas_limit = 410000;
+var web3 = new Web3();
+web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'));
+var MyToken = JSON.parse(fs.readFileSync('./api/models/MyTokens.json', 'utf8'));
+var contract =  web3.eth.contract(MyToken.abi);
+var gas_limit = 1000000;
 exports.getBalance = function(address,tokenAddress){
+
     var contractInstance = contract.at(tokenAddress);
-    var balances = contractInstance.balanceOf.call(address);
+    var balances = contractInstance.balanceOf(address);
     return balances;
 }
 exports.getTotalSupply = function(tokenAddress){
+    console.log("tokenAddress:",tokenAddress);
     var contractInstance = contract.at(tokenAddress);
-    var totalSupply = contractInstance.totalSupply.call();
+    var totalSupply = contractInstance.totalSupply();
     return totalSupply;
 }
 
@@ -24,8 +27,12 @@ exports.getAllowance = function(tokenAddress,sender,reciever){
 }
 
 exports.transferToken = function(tokenAddress,sender,reciever,tokens,privateKey){
+
+    //console.log("privatekey:",privateKey); //not passphrase
     var contractInstance = contract.at(tokenAddress);
-    var transfer  = contractInstance.transfer.getData(reciever, web3.toHex(web3.toBigNumber(tokens*10**18)));
+    //var transfer  = contractInstance.transfer.getData(reciever, web3.toHex(web3.toBigNumber(tokens*10**18)));
+    console.log(web3.toHex(web3.toBigNumber(tokens*10**18)));
+    var transfer  = contractInstance.transfer(reciever, 10);
     var rawTxTransfer = {
         nonce: web3.toHex(web3.eth.getTransactionCount(sender)),
         gasLimit: web3.toHex(gas_limit),
@@ -35,7 +42,12 @@ exports.transferToken = function(tokenAddress,sender,reciever,tokens,privateKey)
         value: web3.toHex(web3.toBigNumber(0)),
         data:transfer
     };
-    return sendRaw(rawTxTransfer,privateKey);
+
+
+    web3.personal.unlockAccount(sender,privateKey, 1000)
+
+    return send(rawTxTransfer,privateKey);
+    //return sendRaw(rawTxTApprove,privateKey);
 }
 
 exports.approveAccount = function(tokenAddress,approver,addressToApprove,tokens,privateKey){
@@ -80,6 +92,20 @@ function sendRaw(rawTx,_key) {
             return err;
         } else {
             console.log(result);
+            return result;
+        }
+    });
+}
+
+function send(Tx,_key) {
+    
+    web3.eth.sendTransaction(
+    Tx, function(err, result) {
+        if(err) {
+            console.log("err:", err);
+            return err;
+        } else {
+            console.log("result:",result);
             return result;
         }
     });

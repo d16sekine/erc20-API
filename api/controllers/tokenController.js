@@ -18,6 +18,7 @@ exports.get_allowance_balance = function(req,res){
 
 exports.post_transfer_token = function(req,res){
     var data = req.body;
+    console.log("data:", data);
     var transfer = token.transferToken(data.tokenAddress,data.sender,data.reciever,data.tokens,data.privateKey);
     res.send(transfer);
 };
