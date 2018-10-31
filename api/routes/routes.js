@@ -3,6 +3,9 @@
 module.exports = function(app){
 
     let ercToken = require('../controllers/tokenController');
+    let account = require('../controllers/accountController');
+
+    app.route('/accounts').post(account.post_accounts);
 
     app.route('/tokens/getBalance').get(ercToken.get_token_balance);
 
